@@ -1,0 +1,31 @@
+<div class="container">
+	<header>
+		<h1>Manage your notes!!</h1>
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Add Notes</h3>
+			</div>
+			<div class="panel-body">
+				<div class="control-group">
+					<select id="input-tags" name="tags[]" multiple class="demo-default" style="width:70%" placeholder="Add Tags">
+						<option ng-repeat="tag in note_tags" value="tag._id">{{tag.name}}</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</header>
+	<ul ng-repeat="note in notes">
+		<li>{{note.content}}</li>
+	</ul>
+</div>
+
+<script type="text/javascript">
+
+	$( document ).ready(function() {
+
+		$('#input-tags').selectize({
+			create: true
+		});
+	});
+	
+</script>
