@@ -1,0 +1,3 @@
+meteor add urigo:angular
+meteor add twbs:bootstrap
+accounts-ui accounts-password accounts-google accounts-facebook
