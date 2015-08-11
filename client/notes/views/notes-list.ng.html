@@ -8,7 +8,7 @@
 				
 			</div>
 			<div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12" ng-if="currentUser">
-				<form ng-submit="newNote.owner=currentUser.username;addNote(newNote,newNoteForm.$valid);" name="newNoteForm" id="noteForm" novalidate>
+				<form ng-submit="newNote.owner=currentUser._id;addNote(newNote,newNoteForm.$valid);" name="newNoteForm" id="noteForm" novalidate>
 					<div class="form-group" ng-class="{ 'has-error' : submitted  &&
 					(newNoteForm.title.$error.required || newNoteForm.title.$error.minlength || newNoteForm.title.$error.minlength)}">
 					<input type="text" name="title" class="form-control" ng-model="newNote.title" placeholder="Title" required ng-minlength="3" ng-maxlength="30"/>
@@ -67,7 +67,7 @@
 					<div class="panel-heading">{{note.createdAt | date:'dd-MM-yyyy'}} - {{note.title}}
 						<button type="button" class="close" 
 						data-target="#{{note._id}}" ng-click="removeNote(note._id)"
-						data-dismiss="alert" ng-if="note.owner == currentUser.username">
+						data-dismiss="alert" ng-if="note.owner == currentUser._id">
 						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 					</button>
 				</div>
