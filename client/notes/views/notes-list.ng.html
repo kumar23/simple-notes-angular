@@ -1,0 +1,110 @@
+<div class="jumbotron" style="margin-top: -100px;">
+	<div class="container">
+		<div class="col-md-9 col-md-offset-3 col-sm-12 col-xs-12">
+			<div class="page-header">
+				<h2>Welcome to notesApp! <small ng-if="!currentUser.username"><meteor-include src="loginButtons"></meteor-include> to create notes</small>
+					<small ng-if="currentUser.username"><meteor-include src="loginButtons"></meteor-include> , add new notes here</small></h2>
+				</div>
+				
+			</div>
+			<div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12" ng-if="currentUser.username">
+				<form ng-submit="newNote.owner=currentUser.username;addNote(newNote,newNoteForm.$valid);" name="newNoteForm" id="noteForm" novalidate>
+					<div class="form-group" ng-class="{ 'has-error' : submitted  &&
+					(newNoteForm.title.$error.required || newNoteForm.title.$error.minlength || newNoteForm.title.$error.minlength)}">
+					<input type="text" name="title" class="form-control" ng-model="newNote.title" placeholder="Title" required ng-minlength="3" ng-maxlength="30"/>
+					<p ng-show="newNoteForm.title.$error.required && submitted" class="help-block">Title is required.</p>
+					<p ng-show="newNoteForm.title.$error.minlength && submitted" class="help-block">Title is too short.</p>
+					<p ng-show="newNoteForm.title.$error.maxlength && submitted" class="help-block">Title is too long.</p>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error': newNoteForm.content.$error.required && submitted }">
+					<textarea rows="6" name="content" class="form-control" placeholder="Note" ng-model="newNote.content" required></textarea>
+					<p ng-show="newNoteForm.content.$error.required && submitted" class="help-block">Note is required.</p>
+				</div>
+				<div class="control-group">
+					<selectize rootModel="tags" config="tagsConfig" options="tags" ng-model="newNote.tags" placeholder="Add Tags"></selectize>
+				</div>
+				<button type="submit" id="formSubmit" class="btn btn-primary pull-right">Save</button>
+			</form>					
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div id="notesList" class="row" style="padding-top: 20px">
+		<div class="row">
+			<div class="col-md-8">
+				<div class="panel panel-default">
+					<div class="panel-body" ng-if="note_tags.length > 0">
+						<ul class="list-inline">
+							<li ng-repeat="tag in note_tags">
+								<div class="btn-group btn-group-xs" role="group" aria-label="...">
+									<button class="btn btn-success" type="button" ng-click="filterByTag(tag.name)">
+										<span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
+										{{tag.name}}  <span class="badge">{{tag.count}}</span>
+									</button>
+								</div>
+							</li>
+						</ul>
+						<p ng-show="searchEnabled"> Showing {{selectedTag.count}} notes taged with 
+							<span class="label label-danger">{{selectedTag.name}}</span></p>
+							<p ng-show="searchEnabled"><a href="" class="tagRef" ng-click="filterByTag()">Show All</a></p>
+						</div>
+						<div class="panel-body" ng-if="note_tags.length == 0">
+							<p>No tags as of now!</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group">
+						<input type="text" id="searchText" placeholder="Search" ng-model="searchText" class="form-control">
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4" id="{{note._id}}" ng-if="notes.length>0" ng-repeat="note in notes | filter:searchText">
+				<div class="panel panel-primary">
+					<div class="panel-heading">{{note.createdAt | date:'dd-MM-yyyy'}} - {{note.title}}
+						<button type="button" class="close" 
+						data-target="#{{note._id}}" ng-click="removeNote(note._id)"
+						data-dismiss="alert" ng-if="note.owner == currentUser.username">
+						<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+					</button>
+				</div>
+				<div class="panel-body">
+					<p>{{note.content}}</p>
+					Tags: 
+					<ul class="list-inline">
+						<li ng-repeat="tag in note.tags">
+							<div class="btn-group btn-group-xs" role="group" aria-label="...">
+								<button class="btn btn-success" type="button" ng-click="filterByTag(tag)">
+									<span class="glyphicon glyphicon-tag" aria-hidden="true"></span>
+									{{tag}}
+								</button>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4" id="{{note._id}}" ng-if="notes.length==0">
+			<h3>No notes created yet!</h3>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$( document ).ready(function() {
+		var $addTags = $('#input-tags').selectize({
+			create: true
+		});	
+		$('#noteForm').submit(function(event){
+			var control = $addTags[0].selectize;
+			control.clear();
+		});
+		$('#searchText').on('focus', function(e){
+			$('html, body').animate({
+				scrollTop: $('#notesList').offset().top
+			}, 450);
+		});
+	});
+</script>
